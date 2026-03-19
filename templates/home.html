@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>CloudLearn</title>
+<link rel="stylesheet" href="/static/style.css">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+background:#f4f6f9;
+}
+
+/* NAVBAR */
+
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 50px;
+background:white;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+color:#4facfe;
+}
+
+.nav-links a{
+margin-left:20px;
+text-decoration:none;
+font-weight:500;
+color:#333;
+}
+
+.join-btn{
+background:#4facfe;
+color:white;
+padding:8px 15px;
+border-radius:5px;
+}
+
+/* HERO SECTION */
+
+.hero{
+height:80vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:white;
+background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+url("https://images.unsplash.com/photo-1523240795612-9a054b0db644");
+background-size:cover;
+background-position:center;
+}
+
+.hero h1{
+font-size:50px;
+margin-bottom:10px;
+}
+
+.hero p{
+font-size:20px;
+}
+
+.hero button{
+margin-top:20px;
+padding:12px 30px;
+border:none;
+background:#ff7b00;
+color:white;
+font-size:18px;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* COURSES SECTION */
+
+.courses{
+padding:50px;
+text-align:center;
+}
+
+.course-grid{
+display:flex;
+justify-content:center;
+gap:25px;
+margin-top:30px;
+flex-wrap:wrap;
+}
+
+.course-card{
+background:white;
+padding:25px;
+width:200px;
+border-radius:10px;
+box-shadow:0 4px 15px rgba(0,0,0,0.1);
+transition:0.3s;
+}
+
+.course-card:hover{
+transform:translateY(-5px);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+<div class="logo">CloudLearn</div>
+
+<div class="nav-links">
+
+<a href="/login">Sign In</a>
+
+<a class="join-btn" href="/register">Join for Free</a>
+
+</div>
+
+</div>
+
+<!-- HERO -->
+
+<div class="hero">
+
+<div>
+
+<h1>Learn Cloud & Tech Skills</h1>
+
+<p>Build your future with online courses</p>
+
+<button onclick="location.href='/register'">Join for Free</button>
+
+</div>
+
+</div>
+
+<!-- POPULAR COURSES -->
+
+<div class="courses">
+
+<h2>Popular Courses</h2>
+
+<div class="course-grid">
+
+<div class="course-card">
+<h3>AWS</h3>
+<p>Learn cloud computing fundamentals</p>
+</div>
+
+<div class="course-card">
+<h3>Docker</h3>
+<p>Containerize applications easily</p>
+</div>
+
+<div class="course-card">
+<h3>Python</h3>
+<p>Programming for beginners</p>
+</div>
+
+<div class="course-card">
+<h3>DevOps</h3>
+<p>CI/CD and automation basics</p>
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

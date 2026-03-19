@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Courses</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="course-container">
+
+<h1 style="text-align:center;color:white;">Available Courses</h1>
+
+<div id="courses"></div>
+
+</div>
+
+<script>
+
+async function loadCourses(){
+
+let response = await fetch("/courses")
+
+let courses = await response.json()
+
+let container=document.getElementById("courses")
+
+courses.forEach(course=>{
+
+container.innerHTML += `
+<div class="course-card">
+
+<h3>${course.title}</h3>
+
+<p>Instructor: ${course.instructor}</p>
+
+<a href="${course.video_url}" target="_blank">Watch Video</a>
+
+</div>
+`
+
+})
+
+}
+
+loadCourses()
+
+</script>
+
+</body>
+</html>

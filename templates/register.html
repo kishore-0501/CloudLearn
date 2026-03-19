@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Register</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Student Register</h2>
+
+<input id="email" placeholder="University Email">
+
+<input id="password" type="password" placeholder="Password">
+<select id="role">
+<option value="student">Student</option>
+<option value="instructor">Instructor</option>
+</select>
+
+<button onclick="register()">Register</button>
+
+<div class="link">
+<a href="/login">Already have account? Login</a>
+</div>
+
+<p id="message"></p>
+
+</div>
+
+<script>
+
+async function register(){
+
+let email = document.getElementById("email").value
+let password = document.getElementById("password").value
+let role=document.getElementById("role").value
+
+let response = await fetch("/register",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+email:email,
+password:password
+})
+})
+
+let data = await response.json()
+
+document.getElementById("message").innerText=data.message
+
+}
+
+</script>
+
+</body>
+</html>
