@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CloudLearn Instructor Studio</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            background:#f5f7fb;
+            color:#1f2937;
+        }
+
+        .navbar{
+            height:84px;
+            background:white;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:0 40px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        .nav-left{
+            display:flex;
+            align-items:center;
+            gap:30px;
+        }
+
+        .logo{
+            font-size:34px;
+            font-weight:700;
+            color:#0056d2;
+        }
+
+        .nav-links a{
+            margin-right:25px;
+            text-decoration:none;
+            color:#374151;
+            font-weight:500;
+        }
+
+        .search-box{
+            display:flex;
+            align-items:center;
+            background:#fff;
+            border:1px solid #d1d5db;
+            border-radius:999px;
+            padding:8px 14px;
+            width:520px;
+        }
+
+        .search-box input{
+            border:none;
+            outline:none;
+            width:100%;
+            font-size:16px;
+            margin:0;
+            padding:8px;
+        }
+
+        .search-btn{
+            width:48px;
+            height:48px;
+            border-radius:50%;
+            border:none;
+            background:#0056d2;
+            color:white;
+            font-size:18px;
+            cursor:pointer;
+        }
+
+        .nav-right{
+            display:flex;
+            align-items:center;
+            gap:18px;
+            font-size:24px;
+            color:#4b5563;
+        }
+
+        .profile-circle{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            background:#0b3b8c;
+            color:white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            font-size:20px;
+        }
+
+        .hero-strip{
+            background:#eaf1fb;
+            padding:34px 50px 20px;
+        }
+
+        .hero-strip h1{
+            margin:0 0 8px;
+            font-size:28px;
+        }
+
+        .hero-strip p{
+            margin:0;
+            color:#4b5563;
+            font-size:16px;
+        }
+
+        .page-content{
+            padding:30px 40px 50px;
+        }
+
+        .studio-layout{
+            display:grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap:24px;
+        }
+
+        .card{
+            background:white;
+            border-radius:18px;
+            padding:24px;
+            box-shadow:0 4px 18px rgba(0,0,0,0.08);
+        }
+
+        .card h2{
+            margin-top:0;
+            margin-bottom:20px;
+            text-align:left;
+            font-size:22px;
+        }
+
+        .form-group{
+            margin-bottom:16px;
+        }
+
+        .form-group label{
+            display:block;
+            margin-bottom:8px;
+            font-weight:600;
+            font-size:14px;
+            color:#374151;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select{
+            width:100%;
+            box-sizing:border-box;
+            padding:13px 14px;
+            border:1px solid #d1d5db;
+            border-radius:10px;
+            font-size:15px;
+            background:white;
+        }
+
+        .form-group textarea{
+            resize:vertical;
+            min-height:110px;
+        }
+
+        .primary-btn{
+            background:#0056d2;
+            color:white;
+            border:none;
+            border-radius:8px;
+            padding:12px 18px;
+            font-weight:600;
+            cursor:pointer;
+            width:100%;
+            transition:0.3s;
+        }
+
+        .primary-btn:hover{
+            background:#0047b3;
+        }
+
+        .secondary-text{
+            color:#6b7280;
+            font-size:14px;
+            margin-top:10px;
+        }
+
+        .preview-image{
+            width:100%;
+            height:220px;
+            object-fit:cover;
+            border-radius:14px;
+            display:block;
+            margin-bottom:18px;
+            background:#eef2f7;
+        }
+
+        .badge{
+            display:inline-block;
+            background:#eef4ff;
+            color:#0056d2;
+            padding:6px 12px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:600;
+            margin-bottom:12px;
+        }
+
+        .provider{
+            font-size:13px;
+            color:#6b7280;
+            margin-bottom:8px;
+        }
+
+        .preview-card h3{
+            margin:0 0 10px;
+            font-size:22px;
+            line-height:1.35;
+        }
+
+        .preview-card p{
+            margin:0 0 12px;
+            color:#4b5563;
+            font-size:14px;
+            line-height:1.6;
+        }
+
+        .preview-meta{
+            font-size:13px;
+            color:#6b7280;
+            margin-top:10px;
+        }
+
+        .success-box,
+        .error-box{
+            margin-top:16px;
+            padding:12px 14px;
+            border-radius:10px;
+            font-size:14px;
+            display:none;
+        }
+
+        .success-box{
+            background:#ecfdf3;
+            color:#166534;
+            border:1px solid #bbf7d0;
+        }
+
+        .error-box{
+            background:#fef2f2;
+            color:#991b1b;
+            border:1px solid #fecaca;
+        }
+
+        @media (max-width: 1100px){
+            .search-box{
+                width:340px;
+            }
+        }
+
+        @media (max-width: 950px){
+            .studio-layout{
+                grid-template-columns:1fr;
+            }
+
+            .navbar{
+                height:auto;
+                padding:20px;
+                flex-direction:column;
+                gap:18px;
+                align-items:flex-start;
+            }
+
+            .nav-left{
+                flex-direction:column;
+                align-items:flex-start;
+                gap:16px;
+                width:100%;
+            }
+
+            .search-box{
+                width:100%;
+            }
+
+            .hero-strip{
+                padding:28px 20px 18px;
+            }
+
+            .page-content{
+                padding:20px 20px 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="nav-left">
+            <div class="logo">CloudLearn</div>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+            </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="Search your uploaded topics">
+                <button class="search-btn">⌕</button>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <span>🌐</span>
+            <span>🔔</span>
+            <div class="profile-circle">K</div>
+        </div>
+    </div>
+
+    <div class="hero-strip">
+        <h1>Instructor Studio</h1>
+        <p>Create and publish new learning content for students on CloudLearn.</p>
+    </div>
+
+    <div class="page-content">
+        <div class="studio-layout">
+
+            <div class="card">
+                <h2>Publish a New Course</h2>
+
+                <div class="form-group">
+                    <label for="title">Course Title</label>
+                    <input type="text" id="title" placeholder="Enter course title">
+                </div>
+
+                <div class="form-group">
+                    <label for="instructor">Instructor Name</label>
+                    <input type="text" id="instructor" placeholder="Enter instructor name">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category">
+                        <option value="Cloud Computing">Cloud Computing</option>
+                        <option value="AWS">AWS</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="Python">Python</option>
+                        <option value="Security">Security</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="thumbnail">Thumbnail Image URL</label>
+                    <input type="file" id="thumbnailFile" accept="image/*">
+                    
+                </div>
+
+                <div class="form-group">
+                    <label for="video">Video URL</label>
+                    <input type="file" id="videoFile" accept="video/*">
+                    
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Course Description</label>
+                    <textarea id="description" placeholder="Write a short description for this course"></textarea>
+                </div>
+
+                <button class="primary-btn" onclick="uploadCourse()">Publish Course</button>
+                <div class="secondary-text">Published courses will appear automatically on the student dashboard.</div>
+
+                <div id="successBox" class="success-box"></div>
+                <div id="errorBox" class="error-box"></div>
+            </div>
+
+            <div class="card preview-card">
+                <img
+                    id="previewImage"
+                    class="preview-image"
+                    src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80"
+                    alt="Course Preview"
+                >
+
+                <div class="badge" id="previewCategory">Cloud Computing</div>
+                <div class="provider">CloudLearn • <span id="previewInstructor">Instructor Name</span></div>
+                <h3 id="previewTitle">Your course title will appear here</h3>
+                <p id="previewDescription">This live preview shows how your course will look before publishing it to students.</p>
+                <div class="preview-meta">
+                    Video link ready: <span id="previewVideoStatus">Not added yet</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+const API_BASE = "https://kjo9l3uvwa.execute-api.us-east-1.amazonaws.com/dev";
+
+function showError(message){
+    const errorBox = document.getElementById("errorBox");
+    const successBox = document.getElementById("successBox");
+    successBox.style.display = "none";
+    errorBox.innerText = message;
+    errorBox.style.display = "block";
+}
+
+function showSuccess(message){
+    const errorBox = document.getElementById("errorBox");
+    const successBox = document.getElementById("successBox");
+    errorBox.style.display = "none";
+    successBox.innerText = message;
+    successBox.style.display = "block";
+}
+
+function updatePreview(){
+    document.getElementById("previewTitle").innerText =
+        document.getElementById("title").value || "Your course title will appear here";
+
+    document.getElementById("previewInstructor").innerText =
+        document.getElementById("instructor").value || "Instructor Name";
+
+    document.getElementById("previewCategory").innerText =
+        document.getElementById("category").value || "Cloud Computing";
+
+    document.getElementById("previewDescription").innerText =
+        document.getElementById("description").value || "This live preview shows how your course will look before publishing it to students.";
+
+    const thumbnailFile = document.getElementById("thumbnailFile").files[0];
+    if (thumbnailFile){
+        const localPreview = URL.createObjectURL(thumbnailFile);
+        document.getElementById("previewImage").src = localPreview;
+    } else {
+        document.getElementById("previewImage").src =
+            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80";
+    }
+
+    const videoFile = document.getElementById("videoFile").files[0];
+    document.getElementById("previewVideoStatus").innerText = videoFile ? "Added" : "Not added yet";
+}
+
+["title", "instructor", "category", "description"].forEach(id => {
+    const element = document.getElementById(id);
+    const eventType = element.tagName === "SELECT" ? "change" : "input";
+    element.addEventListener(eventType, updatePreview);
+});
+
+document.getElementById("thumbnailFile").addEventListener("change", updatePreview);
+document.getElementById("videoFile").addEventListener("change", updatePreview);
+
+async function getUploadUrl(file){
+    const response = await fetch(`${API_BASE}/generate-upload-url`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            file_name: file.name,
+            file_type: file.type
+        })
+    });
+
+    if (!response.ok){
+        throw new Error("Failed to generate upload URL");
+    }
+
+    return await response.json();
+}
+
+async function uploadToS3(uploadUrl, file){
+    const response = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: {
+            "Content-Type": file.type
+        },
+        body: file
+    });
+
+    if (!response.ok){
+        throw new Error("Failed to upload file to S3");
+    }
+}
+
+async function uploadCourse(){
+    const title = document.getElementById("title").value.trim();
+    const instructor = document.getElementById("instructor").value.trim();
+    const category = document.getElementById("category").value;
+    const description = document.getElementById("description").value.trim();
+
+    const thumbnailFile = document.getElementById("thumbnailFile").files[0];
+    const videoFile = document.getElementById("videoFile").files[0];
+
+    if(!title || !instructor || !description || !thumbnailFile || !videoFile){
+        showError("Please fill all fields and select both thumbnail and video files.");
+        return;
+    }
+
+    try{
+        showSuccess("Uploading files, please wait...");
+
+        // 1. Generate upload URL for thumbnail
+        const thumbnailData = await getUploadUrl(thumbnailFile);
+
+        // 2. Upload thumbnail to S3
+        await uploadToS3(thumbnailData.upload_url, thumbnailFile);
+
+        // 3. Generate upload URL for video
+        const videoData = await getUploadUrl(videoFile);
+
+        // 4. Upload video to S3
+        await uploadToS3(videoData.upload_url, videoFile);
+
+        // 5. Save metadata in DynamoDB
+        const response = await fetch(`${API_BASE}/add-course`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title: title,
+                instructor: instructor,
+                category: category,
+                description: description,
+                thumbnail: thumbnailData.file_url,
+                video_url: videoData.file_url
+            })
+        });
+
+        const result = await response.json();
+
+        if(response.ok && (result.status === "approved" || result.status === "success")){
+            showSuccess(result.message || "Course published successfully.");
+
+            document.getElementById("title").value = "";
+            document.getElementById("instructor").value = "";
+            document.getElementById("category").value = "Cloud Computing";
+            document.getElementById("thumbnailFile").value = "";
+            document.getElementById("videoFile").value = "";
+            document.getElementById("description").value = "";
+            updatePreview();
+        } else {
+            showError(result.message || "Unable to publish course.");
+        }
+    } catch(error){
+        console.error(error);
+        showError(error.message || "Server error occurred while publishing the course.");
+    }
+}
+
+updatePreview();
+</script>
+
+</body>
+</html>

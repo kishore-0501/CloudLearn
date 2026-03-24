@@ -121,9 +121,9 @@ transform:translateY(-5px);
 
 <div class="nav-links">
 
-<a href="/login">Sign In</a>
+<a href="#" onclick="openLogin()">Sign In</a>
 
-<a class="join-btn" href="/register">Join for Free</a>
+<a class="join-btn" href="#" onclick="openRegister()">Join for Free</a>
 
 </div>
 
@@ -132,17 +132,17 @@ transform:translateY(-5px);
 <!-- HERO -->
 
 <div class="hero">
+  <div>
+    <h1>Learn Cloud & Tech Skills</h1>
+    <p>Build your future with online courses</p>
 
-<div>
+    <!-- SEARCH BAR -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search for anything...">
+      <button onclick="searchCourses()">Search</button>
+    </div>
 
-<h1>Learn Cloud & Tech Skills</h1>
-
-<p>Build your future with online courses</p>
-
-<button onclick="location.href='/register'">Join for Free</button>
-
-</div>
-
+  </div>
 </div>
 
 <!-- POPULAR COURSES -->
@@ -176,6 +176,131 @@ transform:translateY(-5px);
 </div>
 
 </div>
+
+<!-- LOGIN POPUP -->
+
+<div id="loginModal" class="modal">
+
+<div class="modal-content">
+
+<span class="close" onclick="closeLogin()">&times;</span>
+
+<h2>Sign In</h2>
+
+<input type="email" id="loginEmail" placeholder="Enter Email">
+
+<input type="password" id="loginPassword" placeholder="Enter Password">
+
+<button onclick="loginUser()">Login</button>
+
+</div>
+
+</div>
+
+<!-- REGISTER POPUP -->
+<div id="registerModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeRegister()">&times;</span>
+    <h2>Join for Free</h2>
+
+    <input type="email" id="registerEmail" placeholder="Enter Email">
+    <input type="password" id="registerPassword" placeholder="Enter Password">
+
+    <select id="registerRole" style="width:100%; padding:10px; margin:10px 0; border-radius:5px; border:1px solid #ccc;">
+      <option value="student">Student</option>
+      <option value="instructor">Instructor</option>
+    </select>
+
+    <button onclick="registerUser()">Register</button>
+  </div>
+</div>
+
+<!-- LOGIN SCRIPT -->
+
+<script>
+
+function openLogin(){
+    document.getElementById("loginModal").style.display="block";
+}
+
+function closeLogin(){
+    document.getElementById("loginModal").style.display="none";
+}
+
+async function loginUser(){
+
+    let email = document.getElementById("loginEmail").value
+    let password = document.getElementById("loginPassword").value
+
+    let response = await fetch("/login", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            email:email,
+            password:password
+        })
+    })
+
+    let result = await response.json()
+
+    alert(result.message)
+
+    if(result.status=="approved"){
+    if(result.role === "instructor"){
+        window.location = "/instructor";
+    } else {
+        window.location = "/courses-page";
+    }
+}
+}
+
+// OPEN / CLOSE REGISTER
+function openRegister(){
+  document.getElementById("registerModal").style.display="block";
+}
+
+function closeRegister(){
+  document.getElementById("registerModal").style.display="none";
+}
+
+// REGISTER USER
+async function registerUser(){
+  let email = document.getElementById("registerEmail").value;
+  let password = document.getElementById("registerPassword").value;
+  let role = document.getElementById("registerRole").value;
+
+  let response = await fetch("/register", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({email:email, password:password, role:role})
+  });
+
+  let result = await response.json();
+
+  alert(result.message);
+
+  if(result.status == "approved"){
+    closeRegister();
+    // optionally redirect to courses page
+    window.location="/courses-page";
+  }
+}
+
+function searchCourses(){
+    let query = document.getElementById("searchInput").value.trim();
+
+    if(query === ""){
+        alert("Please enter something to search!");
+        return;
+    }
+
+    // For now, just redirect to courses page with query as a parameter
+    // Later you can implement actual filtering
+    window.location = "/courses-page?search=" + encodeURIComponent(query);
+}
+</script>
 
 </body>
 </html>

@@ -1,50 +1,494 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Courses</title>
-<link rel="stylesheet" href="/static/style.css">
+    <title>CloudLearn Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            background:#f5f7fb;
+            color:#1f2937;
+        }
+
+        .navbar{
+            height:84px;
+            background:white;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:0 40px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        .nav-left{
+            display:flex;
+            align-items:center;
+            gap:30px;
+        }
+
+        .logo{
+            font-size:34px;
+            font-weight:700;
+            color:#0056d2;
+        }
+
+        .nav-links a{
+            margin-right:25px;
+            text-decoration:none;
+            color:#374151;
+            font-weight:500;
+        }
+
+        .search-box{
+            display:flex;
+            align-items:center;
+            background:#fff;
+            border:1px solid #d1d5db;
+            border-radius:999px;
+            padding:8px 14px;
+            width:520px;
+        }
+
+        .search-box input{
+            border:none;
+            outline:none;
+            width:100%;
+            font-size:16px;
+            margin:0;
+            padding:8px;
+        }
+
+        .search-btn{
+            width:48px;
+            height:48px;
+            border-radius:50%;
+            border:none;
+            background:#0056d2;
+            color:white;
+            font-size:18px;
+            cursor:pointer;
+        }
+
+        .nav-right{
+            display:flex;
+            align-items:center;
+            gap:18px;
+            font-size:24px;
+            color:#4b5563;
+        }
+
+        .profile-circle{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            background:#0b3b8c;
+            color:white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            font-size:20px;
+        }
+
+        .hero-strip{
+            background:#eaf1fb;
+            padding:34px 50px 10px;
+        }
+
+        .hero-strip h1{
+            margin:0;
+            font-size:28px;
+        }
+
+        .dashboard{
+            padding:0 40px 40px;
+        }
+
+        .top-panel{
+            background:#eaf1fb;
+            padding:0 10px 30px;
+        }
+
+        .top-section{
+            display:grid;
+            grid-template-columns:1.1fr 1.4fr;
+            gap:24px;
+            margin-top:20px;
+        }
+
+        .progress-card,
+        .next-card{
+            background:white;
+            border-radius:18px;
+            padding:24px;
+            box-shadow:0 4px 18px rgba(0,0,0,0.08);
+        }
+
+        .progress-wrapper{
+            display:flex;
+            align-items:flex-start;
+            gap:18px;
+        }
+
+        .progress-circle{
+            width:90px;
+            height:90px;
+            border:8px solid #d9dee8;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#5b34da;
+            font-size:20px;
+            font-weight:700;
+            flex-shrink:0;
+        }
+
+        .progress-content h3{
+            margin:4px 0 8px;
+            font-size:18px;
+        }
+
+        .progress-content p{
+            margin:0 0 16px;
+            color:#6b7280;
+            font-size:14px;
+        }
+
+        .primary-btn{
+            background:#0056d2;
+            color:white;
+            border:none;
+            border-radius:8px;
+            padding:12px 18px;
+            font-weight:600;
+            cursor:pointer;
+            width:auto;
+        }
+
+        .next-card h4{
+            margin:4px 0 10px;
+            color:#6b7280;
+            font-size:14px;
+        }
+
+        .next-card h3{
+            margin:0 0 50px;
+            font-size:18px;
+        }
+
+        .next-card p{
+            margin:0;
+            color:#6b7280;
+            font-size:14px;
+        }
+
+        .courses-section{
+            padding:36px 0 0;
+        }
+
+        .courses-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:18px;
+        }
+
+        .courses-header h2{
+            margin:0;
+            text-align:left;
+            font-size:20px;
+        }
+
+        .filter-row{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-bottom:24px;
+        }
+
+        .filter-chip{
+            padding:10px 16px;
+            border-radius:999px;
+            border:1px solid #d1d5db;
+            background:white;
+            color:#374151;
+            cursor:pointer;
+            font-size:14px;
+        }
+
+        .filter-chip.active{
+            background:#5a6784;
+            color:white;
+            border-color:#5a6784;
+        }
+
+        .course-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+            gap:24px;
+        }
+
+        .course-card-modern{
+            background:white;
+            border-radius:18px;
+            overflow:hidden;
+            box-shadow:0 4px 18px rgba(0,0,0,0.08);
+            transition:transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .course-card-modern:hover{
+            transform:translateY(-6px);
+            box-shadow:0 10px 24px rgba(0,0,0,0.12);
+        }
+
+        .course-card-modern img{
+            width:100%;
+            height:180px;
+            object-fit:cover;
+            display:block;
+        }
+
+        .course-info{
+            padding:18px;
+        }
+
+        .badge{
+            display:inline-block;
+            background:#eef4ff;
+            color:#0056d2;
+            padding:6px 12px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:600;
+            margin-bottom:12px;
+        }
+
+        .provider{
+            font-size:13px;
+            color:#6b7280;
+            margin-bottom:8px;
+        }
+
+        .course-info h3{
+            margin:0 0 10px;
+            font-size:21px;
+            line-height:1.35;
+        }
+
+        .course-info p{
+            margin:0 0 12px;
+            color:#4b5563;
+            font-size:14px;
+            line-height:1.6;
+        }
+
+        .course-meta{
+            font-size:13px;
+            color:#6b7280;
+            margin-bottom:14px;
+        }
+
+        .empty-state{
+            background:white;
+            border-radius:18px;
+            padding:40px;
+            text-align:center;
+            box-shadow:0 4px 18px rgba(0,0,0,0.08);
+            color:#6b7280;
+        }
+
+        @media (max-width: 1100px){
+            .search-box{
+                width:340px;
+            }
+        }
+
+        @media (max-width: 900px){
+            .navbar{
+                height:auto;
+                padding:20px;
+                flex-direction:column;
+                gap:18px;
+                align-items:flex-start;
+            }
+
+            .nav-left{
+                flex-direction:column;
+                align-items:flex-start;
+                gap:16px;
+                width:100%;
+            }
+
+            .search-box{
+                width:100%;
+            }
+
+            .top-section{
+                grid-template-columns:1fr;
+            }
+
+            .dashboard{
+                padding:0 20px 30px;
+            }
+
+            .hero-strip{
+                padding:28px 20px 10px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="course-container">
+    <div class="navbar">
+        <div class="nav-left">
+            <div class="logo">CloudLearn</div>
 
-<h1 style="text-align:center;color:white;">Available Courses</h1>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="What do you want to learn?" onkeyup="filterCourses()">
+                <button class="search-btn">⌕</button>
+            </div>
+        </div>
 
-<div id="courses"></div>
+        <div class="nav-right">
+            <span>🌐</span>
+            <span>🔔</span>
+            <div class="profile-circle">K</div>
+        </div>
+    </div>
 
-</div>
+    <div class="top-panel">
+        <div class="hero-strip">
+            <h1>Welcome, Kishore</h1>
+        </div>
+
+        <div class="dashboard">
+            <div class="top-section">
+
+                <div class="progress-card">
+                    <div class="progress-wrapper">
+                        <div class="progress-circle">0%</div>
+                        <div class="progress-content">
+                            <h3>Programming for Everybody (Getting Started with Python)</h3>
+                            <p>Part of Python for Everybody Specialization</p>
+                            <button class="primary-btn">Get started</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="next-card">
+                    <h4>Up Next</h4>
+                    <h3>Welcome to Cloud Computing</h3>
+                    <p>Video • 6 min</p>
+                </div>
+
+            </div>
+
+            <div class="courses-section">
+                <div class="courses-header">
+                    <h2>Recommended Courses</h2>
+                </div>
+
+                <div class="filter-row">
+                    <button class="filter-chip active" onclick="setCategory('All', this)">All</button>
+                    <button class="filter-chip" onclick="setCategory('Cloud Computing', this)">Cloud Computing</button>
+                    <button class="filter-chip" onclick="setCategory('AWS', this)">AWS</button>
+                    <button class="filter-chip" onclick="setCategory('DevOps', this)">DevOps</button>
+                    <button class="filter-chip" onclick="setCategory('Python', this)">Python</button>
+                    <button class="filter-chip" onclick="setCategory('Security', this)">Security</button>
+                </div>
+
+                <div id="courseList" class="course-grid"></div>
+            </div>
+        </div>
+    </div>
 
 <script>
+let allCourses = [];
+let selectedCategory = "All";
 
 async function loadCourses(){
-
-let response = await fetch("/courses")
-
-let courses = await response.json()
-
-let container=document.getElementById("courses")
-
-courses.forEach(course=>{
-
-container.innerHTML += `
-<div class="course-card">
-
-<h3>${course.title}</h3>
-
-<p>Instructor: ${course.instructor}</p>
-
-<a href="${course.video_url}" target="_blank">Watch Video</a>
-
-</div>
-`
-
-})
-
+    try{
+        let res = await fetch("https://kjo9l3uvwa.execute-api.us-east-1.amazonaws.com/dev/courses");
+        let data = await res.json();
+        allCourses = data;
+        renderCourses();
+    } catch(error){
+        document.getElementById("courseList").innerHTML = `
+            <div class="empty-state">
+                Unable to load courses right now.
+            </div>
+        `;
+    }
 }
 
-loadCourses()
+function renderCourses(){
+    let container = document.getElementById("courseList");
+    let keyword = document.getElementById("searchInput").value.toLowerCase();
 
+    let filteredCourses = allCourses.filter(course => {
+        let matchesCategory = selectedCategory === "All" || course.category === selectedCategory;
+        let matchesKeyword =
+            (course.title || "").toLowerCase().includes(keyword) ||
+            (course.instructor || "").toLowerCase().includes(keyword) ||
+            (course.description || "").toLowerCase().includes(keyword) ||
+            (course.category || "").toLowerCase().includes(keyword);
+
+        return matchesCategory && matchesKeyword;
+    });
+
+    if(filteredCourses.length === 0){
+        container.innerHTML = `
+            <div class="empty-state">
+                No courses found for this selection.
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = "";
+
+    filteredCourses.forEach(course => {
+        let image = course.thumbnail && course.thumbnail.trim() !== ""
+            ? course.thumbnail
+            : "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80";
+
+        let card = `
+            <div class="course-card-modern">
+                <img src="${image}" alt="${course.title}">
+                <div class="course-info">
+                    <div class="badge">${course.category || "Course"}</div>
+                    <div class="provider">CloudLearn • ${course.instructor || "Instructor"}</div>
+                    <h3>${course.title || "Untitled Course"}</h3>
+                    <p>${course.description || "Start learning with this instructor-uploaded course on CloudLearn."}</p>
+                    <div class="course-meta">By ${course.instructor || "Instructor"}</div>
+                    <button class="primary-btn" onclick="window.open('${course.video_url}', '_blank')">Start Learning</button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += card;
+    });
+}
+
+function filterCourses(){
+    renderCourses();
+}
+
+function setCategory(category, element){
+    selectedCategory = category;
+
+    document.querySelectorAll(".filter-chip").forEach(chip => {
+        chip.classList.remove("active");
+    });
+
+    element.classList.add("active");
+    renderCourses();
+}
+
+loadCourses();
 </script>
 
 </body>

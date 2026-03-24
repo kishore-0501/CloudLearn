@@ -60,3 +60,231 @@ button:hover{
     border-radius:10px;
     box-shadow:0 4px 15px rgba(0,0,0,0.2);
 }
+
+/* MODAL BACKGROUND */
+
+.modal{
+display:none;
+position:fixed;
+z-index:1;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+backdrop-filter: blur(4px);
+}
+
+/* MODAL BOX */
+
+.modal-content{
+background:white;
+margin:10% auto;
+padding:30px;
+width:350px;
+border-radius:10px;
+text-align:center;
+box-shadow:0 5px 20px rgba(0,0,0,0.3);
+}
+
+/* CLOSE BUTTON */
+
+.close{
+float:right;
+font-size:25px;
+cursor:pointer;
+}
+
+/* INPUTS */
+
+.modal-content input{
+width:100%;
+box-sizing:border-box;
+padding:10px;
+margin:10px 0;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+/* BUTTON */
+
+.modal-content button{
+padding:12px;
+background:#4facfe;
+border:none;
+color:white;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.modal-content{
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity:0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity:1;
+        transform: translateY(0);
+    }
+}
+
+.course-card:hover{
+    transform: translateY(-5px);
+    transition:0.3s;
+}
+
+/* HERO SEARCH BAR */
+.search-bar {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    max-width: 500px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-bar input {
+    width: 70%;
+    padding: 12px 15px;
+    border-radius: 6px 0 0 6px;
+    border: none;
+    font-size: 16px;
+    height: 48px; /* Added fixed height */
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+    outline: none; /* Removes default focus outline */
+}
+
+.search-bar button {
+    width: 30%;
+    padding: 12px;
+    border: none;
+    background: #ff7b00;
+    color: white;
+    font-size: 16px;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    transition: 0.3s;
+    height: 48px; /* Matches input height */
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+.search-bar button:hover {
+    background: #e06600;
+}
+
+/* ----------------- DASHBOARD ----------------- */
+.dashboard {
+    padding: 30px;
+}
+
+/* ----------------- WELCOME SECTION ----------------- */
+.welcome {
+    background: #eaf1fb;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.welcome h2 {
+    margin: 0;
+}
+
+/* ----------------- TOP SECTION ----------------- */
+.top-section {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* PROGRESS CARD */
+.progress-card {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.progress-circle {
+    font-size: 24px;
+    color: #4facfe;
+    margin-bottom: 10px;
+}
+
+/* NEXT CARD */
+.next-card {
+    flex: 2;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ----------------- COURSES SECTION ----------------- */
+.courses-section {
+    margin-top: 20px;
+}
+
+/* COURSE GRID */
+.course-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* MODERN COURSE CARD */
+.course-card-modern {
+    width: 260px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+}
+
+.course-card-modern:hover {
+    transform: translateY(-5px);
+}
+
+.course-card-modern img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+}
+
+/* COURSE INFO */
+.course-info {
+    padding: 15px;
+}
+
+.course-info h3 {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.course-info p {
+    font-size: 13px;
+    color: #555;
+}
+
+.course-info button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #4facfe;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* ADD COURSE BUTTON */
+.add-course-btn {
+    margin-bottom: 20px;
+}
