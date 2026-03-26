@@ -345,6 +345,10 @@
     <div class="navbar">
         <div class="nav-left">
             <div class="logo">CloudLearn</div>
+            
+            <div class="nav-links">
+                <a href="/">Home</a>
+            </div>
 
             
             <div class="search-box">
@@ -354,6 +358,7 @@
         </div>
 
         <div class="nav-right">
+        
             <div class="profile-circle">K</div>
         </div>
     </div>
@@ -368,11 +373,11 @@
 
                 <div class="progress-card">
                     <div class="progress-wrapper">
-                        <div class="progress-circle">0%</div>
+                        <div class="progress-circle" id="progressValue">0%</div>
                         <div class="progress-content">
-                            <h3>Programming for Everybody (Getting Started with Python)</h3>
-                            <p>Part of Python for Everybody Specialization</p>
-                            <button class="primary-btn">Get started</button>
+                            <h3 id="latestTitle">No course yet</h3>
+                            <p id="latestInstructor">Start learning below</p>
+                            <button class="primary-btn" id="startBtn" style="display:none;">Continue</button>
                         </div>
                     </div>
                 </div>
@@ -408,6 +413,7 @@ async function loadCourses(){
         let data = await res.json();
         allCourses = data;
         renderCourses();
+        showLatestCourse();
     } catch(error){
         document.getElementById("courseList").innerHTML = `
             <div class="empty-state">
@@ -481,6 +487,49 @@ function setCategory(category, element){
 }
 
 loadCourses();
+
+function showLatestCourse(){
+    if(allCourses.length === 0){
+        return;
+    }
+
+    // Get latest uploaded course (last item)
+    let latest = allCourses[allCourses.length - 1];
+
+    document.getElementById("latestTitle").innerText = latest.title;
+    document.getElementById("latestInstructor").innerText = "By " + latest.instructor;
+
+    let progress = localStorage.getItem(latest.course_id);
+
+    if(!progress){
+        progress = 0;
+    }
+
+    document.getElementById("progressValue").innerText = progress + "%";
+
+    let btn = document.getElementById("startBtn");
+    btn.style.display = "inline-block";
+
+    btn.onclick = () => openVideo(latest.video_url, latest.course_id);
+}
+
+function openVideo(url, courseId){
+    window.open(url, "_blank");
+
+    // simulate progress (for demo)
+    let current = localStorage.getItem(courseId) || 0;
+
+    current = parseInt(current) + 20;
+
+    if(current > 100){
+        current = 100;
+    }
+
+    localStorage.setItem(courseId, current);
+
+    // update UI
+    document.getElementById("progressValue").innerText = current + "%";
+}
 </script>
 
 </body>
