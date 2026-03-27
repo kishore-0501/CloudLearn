@@ -428,15 +428,20 @@ function renderCourses(){
     let keyword = document.getElementById("searchInput").value.toLowerCase();
 
     let filteredCourses = allCourses.filter(course => {
-        let matchesCategory = selectedCategory === "All" || course.category === selectedCategory;
-        let matchesKeyword =
-            (course.title || "").toLowerCase().includes(keyword) ||
-            (course.instructor || "").toLowerCase().includes(keyword) ||
-            (course.description || "").toLowerCase().includes(keyword) ||
-            (course.category || "").toLowerCase().includes(keyword);
+    let isValid =
+        course.title && course.title.trim() !== "" &&
+        course.instructor && course.instructor.trim() !== "" &&
+        course.video_url && course.video_url.trim() !== "";
 
-        return matchesCategory && matchesKeyword;
-    });
+    let matchesCategory = selectedCategory === "All" || course.category === selectedCategory;
+    let matchesKeyword =
+        (course.title || "").toLowerCase().includes(keyword) ||
+        (course.instructor || "").toLowerCase().includes(keyword) ||
+        (course.description || "").toLowerCase().includes(keyword) ||
+        (course.category || "").toLowerCase().includes(keyword);
+
+    return isValid && matchesCategory && matchesKeyword;
+});
 
     if(filteredCourses.length === 0){
         container.innerHTML = `
@@ -488,32 +493,41 @@ function setCategory(category, element){
 
 loadCourses();
 
+<script>
 function showLatestCourse(){
-    console.log("Latest course data:", latest);  // 👈 add this line
     if(allCourses.length === 0){
         return;
     }
 
-    // Get latest uploaded course (last item)
-    let latest = allCourses[allCourses.length - 1];
+    let validCourses = allCourses.filter(course =>
+        course.title && course.title.trim() !== "" &&
+        course.instructor && course.instructor.trim() !== "" &&
+        course.video_url && course.video_url.trim() !== ""
+    );
 
-    document.getElementById("latestTitle").innerText = latest.title;
-    document.getElementById("latestInstructor").innerText = "By " + latest.instructor;
-
-    let progress = localStorage.getItem(latest.course_id);
-
-    if(!progress){
-        progress = 0;
+    if(validCourses.length === 0){
+        document.getElementById("latestTitle").innerText = "No course yet";
+        document.getElementById("latestInstructor").innerText = "Start learning below";
+        document.getElementById("progressValue").innerText = "0%";
+        document.getElementById("startBtn").style.display = "none";
+        return;
     }
 
+    let latest = validCourses[validCourses.length - 1];
+
+    document.getElementById("latestTitle").innerText =
+        latest.title || "Untitled Course";
+
+    document.getElementById("latestInstructor").innerText =
+        "By " + (latest.instructor || "Unknown Instructor");
+
+    let progress = localStorage.getItem(latest.course_id) || 0;
     document.getElementById("progressValue").innerText = progress + "%";
 
     let btn = document.getElementById("startBtn");
     btn.style.display = "inline-block";
-
     btn.onclick = () => openVideo(latest.video_url, latest.course_id);
 }
-
 function openVideo(url, courseId){
     window.open(url, "_blank");
 
