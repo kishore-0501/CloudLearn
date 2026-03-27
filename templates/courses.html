@@ -493,9 +493,12 @@ function setCategory(category, element){
 
 loadCourses();
 
-<script>
 function showLatestCourse(){
     if(allCourses.length === 0){
+        document.getElementById("latestTitle").innerText = "No course yet";
+        document.getElementById("latestInstructor").innerText = "Start learning below";
+        document.getElementById("progressValue").innerText = "0%";
+        document.getElementById("startBtn").style.display = "none";
         return;
     }
 
@@ -515,18 +518,17 @@ function showLatestCourse(){
 
     let latest = validCourses[validCourses.length - 1];
 
-    document.getElementById("latestTitle").innerText =
-        latest.title || "Untitled Course";
-
-    document.getElementById("latestInstructor").innerText =
-        "By " + (latest.instructor || "Unknown Instructor");
+    document.getElementById("latestTitle").innerText = latest.title || "Untitled Course";
+    document.getElementById("latestInstructor").innerText = "By " + (latest.instructor || "Unknown Instructor");
 
     let progress = localStorage.getItem(latest.course_id) || 0;
     document.getElementById("progressValue").innerText = progress + "%";
 
     let btn = document.getElementById("startBtn");
     btn.style.display = "inline-block";
-    btn.onclick = () => openVideo(latest.video_url, latest.course_id);
+    btn.onclick = function(){
+        openVideo(latest.video_url, latest.course_id);
+    };
 }
 function openVideo(url, courseId){
     window.open(url, "_blank");
