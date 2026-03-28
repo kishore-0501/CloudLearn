@@ -203,7 +203,9 @@ transform:translateY(-5px);
     <span class="close" onclick="closeRegister()">&times;</span>
     <h2>Join for Free</h2>
 
+    <input type="text" id="registerName" placeholder="Enter Full Name">
     <input type="email" id="registerEmail" placeholder="Enter Email">
+    <input type="text" id="registerPhone" placeholder="Enter Phone Number">
     <input type="password" id="registerPassword" placeholder="Enter Password">
 
     <select id="registerRole" style="width:100%; padding:10px; margin:10px 0; border-radius:5px; border:1px solid #ccc;">
@@ -248,12 +250,14 @@ async function loginUser(){
     alert(result.message)
 
     if(result.status=="approved"){
-    if(result.role === "instructor"){
-        window.location = "/instructor";
-    } else {
-        window.location = "/courses-page";
+        localStorage.setItem("currentUser", email);
+
+        if(result.role === "instructor"){
+            window.location = "/instructor";
+        } else {
+            window.location = "/courses-page";
+        }
     }
-}
 }
 
 // OPEN / CLOSE REGISTER
@@ -266,15 +270,29 @@ function closeRegister(){
 }
 
 // REGISTER USER
+<script>
 async function registerUser(){
-  let email = document.getElementById("registerEmail").value;
-  let password = document.getElementById("registerPassword").value;
+  let name = document.getElementById("registerName").value.trim();
+  let email = document.getElementById("registerEmail").value.trim();
+  let phone = document.getElementById("registerPhone").value.trim();
+  let password = document.getElementById("registerPassword").value.trim();
   let role = document.getElementById("registerRole").value;
+
+  if(!name || !email || !phone || !password){
+    alert("All fields are required");
+    return;
+  }
 
   let response = await fetch("/register", {
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({email:email, password:password, role:role})
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      phone: phone,
+      password: password,
+      role: role
+    })
   });
 
   let result = await response.json();
@@ -282,11 +300,17 @@ async function registerUser(){
   alert(result.message);
 
   if(result.status == "approved"){
+    localStorage.setItem("currentUser", email);
     closeRegister();
-    // optionally redirect to courses page
-    window.location="/courses-page";
+
+    if(role === "instructor"){
+      window.location = "/instructor";
+    } else {
+      window.location = "/courses-page";
+    }
   }
 }
+</script>
 
 function searchCourses(){
     let query = document.getElementById("searchInput").value.trim();
