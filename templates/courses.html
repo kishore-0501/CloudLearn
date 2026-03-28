@@ -358,8 +358,8 @@
         </div>
 
         <div class="nav-right">
-        
-            <div class="profile-circle">K</div>
+            <div class="bookmark-icon" onclick="openBookmarks()">🔖</div>
+            <div class="profile-circle" id="profileCircle" onclick="openProfile()">K</div>
         </div>
     </div>
 
@@ -547,7 +547,123 @@ function openVideo(url, courseId){
     // update UI
     document.getElementById("progressValue").innerText = current + "%";
 }
+
+function openProfile(){
+    document.getElementById("profileModal").style.display = "block";
+    loadProfile();
+}
+
+function closeProfile(){
+    document.getElementById("profileModal").style.display = "none";
+}
+
+function openBookmarks(){
+    document.getElementById("bookmarkModal").style.display = "block";
+    loadBookmarks();
+}
+
+function closeBookmarks(){
+    document.getElementById("bookmarkModal").style.display = "none";
+}
+
+async function loadProfile(){
+    let email = localStorage.getItem("currentUser");
+
+    if(!email){
+        alert("No user logged in");
+        return;
+    }
+
+    let response = await fetch(`/profile?email=${email}`);
+    let data = await response.json();
+
+    if(data.status === "approved"){
+        let profile = data.profile;
+
+        document.getElementById("profileName").value = profile.name;
+        document.getElementById("profileEmail").value = profile.email;
+        document.getElementById("profilePhone").value = profile.phone;
+        document.getElementById("profileRole").value = profile.role;
+
+        document.getElementById("profileCircle").innerText = profile.profile_letter;
+        document.getElementById("popupProfileCircle").innerText = profile.profile_letter;
+    }
+}
+
+async function updateProfile(){
+    let email = document.getElementById("profileEmail").value;
+    let name = document.getElementById("profileName").value;
+    let phone = document.getElementById("profilePhone").value;
+
+    let response = await fetch("/profile", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            email: email,
+            name: name,
+            phone: phone
+        })
+    });
+
+    let data = await response.json();
+    alert(data.message);
+
+    if(data.status === "approved"){
+        document.getElementById("profileCircle").innerText = name.charAt(0).toUpperCase();
+        document.getElementById("popupProfileCircle").innerText = name.charAt(0).toUpperCase();
+        closeProfile();
+    }
+}
+
+function loadBookmarks(){
+    let bookmarks = JSON.parse(localStorage.getItem("bookmarkedCourses") || "[]");
+    let bookmarkList = document.getElementById("bookmarkList");
+
+    bookmarkList.innerHTML = "";
+
+    if(bookmarks.length === 0){
+        bookmarkList.innerHTML = "<p>No saved courses yet.</p>";
+        return;
+    }
+
+    bookmarks.forEach(course => {
+        bookmarkList.innerHTML += `
+            <div class="bookmark-item">
+                <h4>${course.title}</h4>
+                <p>${course.instructor}</p>
+            </div>
+        `;
+    });
+}
 </script>
+
+<!-- PROFILE POPUP -->
+<div id="profileModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeProfile()">&times;</span>
+    <h2>My Profile</h2>
+
+    <div class="profile-circle large-profile-circle" id="popupProfileCircle">K</div>
+
+    <input type="text" id="profileName" placeholder="Full Name">
+    <input type="email" id="profileEmail" placeholder="Email" readonly>
+    <input type="text" id="profilePhone" placeholder="Phone Number">
+    <input type="text" id="profileRole" placeholder="Role" readonly>
+
+    <button onclick="updateProfile()">Save Changes</button>
+  </div>
+</div>
+
+<!-- BOOKMARK POPUP -->
+<div id="bookmarkModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeBookmarks()">&times;</span>
+    <h2>Saved Courses</h2>
+    <div id="bookmarkList"></div>
+  </div>
+</div>
 
 </body>
 </html>

@@ -9,9 +9,11 @@
 
 <div class="container">
 
-    <h2>Register</h2>
+    <h2>Create Account</h2>
 
-    <input id="email" placeholder="University Email">
+    <input id="name" placeholder="Full Name">
+    <input id="email" placeholder="Email">
+    <input id="phone" placeholder="Phone Number">
     <input id="password" type="password" placeholder="Password">
 
     <select id="role">
@@ -33,9 +35,17 @@
 
 async function registerUser(){
 
-    let email = document.getElementById("email").value
-    let password = document.getElementById("password").value
+    let name = document.getElementById("name").value.trim()
+    let email = document.getElementById("email").value.trim()
+    let phone = document.getElementById("phone").value.trim()
+    let password = document.getElementById("password").value.trim()
     let role = document.getElementById("role").value
+
+    // Basic validation
+    if(!name || !email || !phone || !password){
+        document.getElementById("message").innerText = "All fields are required"
+        return
+    }
 
     let response = await fetch("/register", {
         method: "POST",
@@ -43,7 +53,9 @@ async function registerUser(){
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
+            name: name,
             email: email,
+            phone: phone,
             password: password,
             role: role
         })
@@ -54,6 +66,10 @@ async function registerUser(){
     document.getElementById("message").innerText = data.message
 
     if(data.status === "approved"){
+
+        // Save user locally for dashboard/profile use
+        localStorage.setItem("currentUser", email)
+
         if(role === "instructor"){
             window.location = "/instructor"
         } else {

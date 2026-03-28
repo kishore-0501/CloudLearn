@@ -288,3 +288,46 @@ transition:0.3s;
 .add-course-btn {
     margin-bottom: 20px;
 }
+
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.bookmark-icon{
+    font-size:22px;
+    cursor:pointer;
+}
+
+.profile-circle{
+    width:40px;
+    height:40px;
+    background:#4facfe;
+    color:white;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.large-profile-circle{
+    width:70px;
+    height:70px;
+    font-size:28px;
+    margin:0 auto 15px auto;
+}
+
+#bookmarkList{
+    text-align:left;
+    margin-top:15px;
+}
+
+.bookmark-item{
+    background:#f5f7fb;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:10px;
+}

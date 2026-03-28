@@ -46,14 +46,16 @@ def register_user():
     try:
         data = request.get_json()
 
+        name = data.get("name")
         email = data.get("email")
         password = data.get("password")
+        phone = data.get("phone")
         role = data.get("role", "student")
 
-        if not email or not password:
+        if not name or not email or not password or not phone:
             return jsonify({
                 "status": "rejected",
-                "message": "Email and password are required"
+                "message": "Name, email, password, and phone are required"
             }), 400
 
         response = users_table.get_item(Key={"email": email})
@@ -67,7 +69,9 @@ def register_user():
         users_table.put_item(Item={
             "email": email,
             "password": password,
-            "role": role
+            "role": role,
+            "name": name,
+            "phone": phone
         })
 
         return jsonify({
@@ -81,7 +85,6 @@ def register_user():
             "status": "error",
             "message": str(e)
         }), 500
-
 
 @app.route("/login", methods=["POST"])
 def login_user():
@@ -116,11 +119,94 @@ def login_user():
         return jsonify({
             "status": "approved",
             "message": "Login successful",
-            "role": user.get("role", "student")
+            "role": user.get("role", "student"),
+            "name": user.get("name", ""),
+            "email": user.get("email", "")
         }), 200
 
     except Exception as e:
         print("LOGIN ERROR:", str(e))
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+        
+        
+@app.route("/profile", methods=["GET"])
+def get_profile():
+    try:
+        email = request.args.get("email")
+
+        if not email:
+            return jsonify({
+                "status": "rejected",
+                "message": "Email is required"
+            }), 400
+
+        response = users_table.get_item(Key={"email": email})
+
+        if "Item" not in response:
+            return jsonify({
+                "status": "rejected",
+                "message": "User not found"
+            }), 404
+
+        user = response["Item"]
+
+        profile_letter = user["name"][0].upper() if user.get("name") else "U"
+
+        return jsonify({
+            "status": "approved",
+            "profile": {
+                "name": user.get("name", ""),
+                "email": user.get("email", ""),
+                "phone": user.get("phone", ""),
+                "role": user.get("role", "student"),
+                "profile_letter": profile_letter
+            }
+        }), 200
+
+    except Exception as e:
+        print("GET PROFILE ERROR:", str(e))
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+        
+@app.route("/profile", methods=["PUT"])
+def update_profile():
+    try:
+        data = request.get_json()
+
+        email = data.get("email")
+        name = data.get("name")
+        phone = data.get("phone")
+
+        if not email or not name or not phone:
+            return jsonify({
+                "status": "rejected",
+                "message": "Email, name, and phone are required"
+            }), 400
+
+        users_table.update_item(
+            Key={"email": email},
+            UpdateExpression="SET #n = :name, phone = :phone",
+            ExpressionAttributeNames={
+                "#n": "name"
+            },
+            ExpressionAttributeValues={
+                ":name": name,
+                ":phone": phone
+            }
+        )
+
+        return jsonify({
+            "status": "approved",
+            "message": "Profile updated successfully"
+        }), 200
+
+    except Exception as e:
+        print("UPDATE PROFILE ERROR:", str(e))
         return jsonify({
             "status": "error",
             "message": str(e)
