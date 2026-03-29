@@ -365,7 +365,7 @@
 
     <div class="top-panel">
         <div class="hero-strip">
-            <h1>Welcome, Kishore</h1>
+            <h1 id="welcomeText">Welcome, User</h1>
         </div>
 
         <div class="dashboard">
@@ -492,6 +492,7 @@ function setCategory(category, element){
 }
 
 loadCourses();
+loadProfile(); 
 
 function showLatestCourse(){
     if(allCourses.length === 0){
@@ -570,7 +571,6 @@ async function loadProfile(){
     let email = localStorage.getItem("currentUser");
 
     if(!email){
-        alert("No user logged in");
         return;
     }
 
@@ -580,13 +580,17 @@ async function loadProfile(){
     if(data.status === "approved"){
         let profile = data.profile;
 
-        document.getElementById("profileName").value = profile.name;
-        document.getElementById("profileEmail").value = profile.email;
-        document.getElementById("profilePhone").value = profile.phone;
-        document.getElementById("profileRole").value = profile.role;
+        document.getElementById("profileName").value = profile.name || "";
+        document.getElementById("profileEmail").value = profile.email || "";
+        document.getElementById("profilePhone").value = profile.phone || "";
+        document.getElementById("profileRole").value = profile.role || "";
 
-        document.getElementById("profileCircle").innerText = profile.profile_letter;
-        document.getElementById("popupProfileCircle").innerText = profile.profile_letter;
+        // CHANGED: set profile circles
+        document.getElementById("profileCircle").innerText = profile.profile_letter || "U";
+        document.getElementById("popupProfileCircle").innerText = profile.profile_letter || "U";
+
+        // CHANGED: set welcome text
+        document.getElementById("welcomeText").innerText = "Welcome, " + (profile.name || "User");
     }
 }
 
@@ -613,6 +617,7 @@ async function updateProfile(){
     if(data.status === "approved"){
         document.getElementById("profileCircle").innerText = name.charAt(0).toUpperCase();
         document.getElementById("popupProfileCircle").innerText = name.charAt(0).toUpperCase();
+        document.getElementById("welcomeText").innerText = "Welcome, " + name;
         closeProfile();
     }
 }

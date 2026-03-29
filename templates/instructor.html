@@ -307,9 +307,7 @@
         </div>
 
         <div class="nav-right">
-            <span>🌐</span>
-            <span>🔔</span>
-            <div class="profile-circle">K</div>
+            <div class="profile-circle" id="profileCircle" onclick="openProfile()">K</div>
         </div>
     </div>
 
@@ -543,7 +541,86 @@ async function uploadCourse(){
 }
 
 updatePreview();
+loadProfile();
+
+function openProfile(){
+    document.getElementById("profileModal").style.display = "block";
+    loadProfile();
+}
+
+function closeProfile(){
+    document.getElementById("profileModal").style.display = "none";
+}
+
+async function loadProfile(){
+    let email = localStorage.getItem("currentUser");
+
+    if(!email){
+        return;
+    }
+
+    let response = await fetch(`/profile?email=${email}`);
+    let data = await response.json();
+
+    if(data.status === "approved"){
+        let profile = data.profile;
+
+        document.getElementById("profileName").value = profile.name || "";
+        document.getElementById("profileEmail").value = profile.email || "";
+        document.getElementById("profilePhone").value = profile.phone || "";
+        document.getElementById("profileRole").value = profile.role || "";
+
+        document.getElementById("profileCircle").innerText = profile.profile_letter || "U";
+        document.getElementById("popupProfileCircle").innerText = profile.profile_letter || "U";
+    }
+}
+
+async function updateProfile(){
+    let email = document.getElementById("profileEmail").value;
+    let name = document.getElementById("profileName").value.trim();
+    let phone = document.getElementById("profilePhone").value.trim();
+
+    let response = await fetch("/profile", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            email: email,
+            name: name,
+            phone: phone
+        })
+    });
+
+    let data = await response.json();
+    alert(data.message);
+
+    if(data.status === "approved"){
+        let firstLetter = name.charAt(0).toUpperCase();
+        document.getElementById("profileCircle").innerText = firstLetter;
+        document.getElementById("popupProfileCircle").innerText = firstLetter;
+        closeProfile();
+    }
+}
+
 </script>
+
+<!-- PROFILE POPUP -->
+<div id="profileModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeProfile()">&times;</span>
+    <h2>My Profile</h2>
+
+    <div class="profile-circle large-profile-circle" id="popupProfileCircle">K</div>
+
+    <input type="text" id="profileName" placeholder="Full Name">
+    <input type="email" id="profileEmail" placeholder="Email" readonly>
+    <input type="text" id="profilePhone" placeholder="Phone Number">
+    <input type="text" id="profileRole" placeholder="Role" readonly>
+
+    <button onclick="updateProfile()">Save Changes</button>
+  </div>
+</div>
 
 </body>
 </html>
