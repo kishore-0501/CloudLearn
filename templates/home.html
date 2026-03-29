@@ -220,39 +220,44 @@ transform:translateY(-5px);
 <!-- LOGIN SCRIPT -->
 
 <script>
-
-function openLogin(){
-    document.getElementById("loginModal").style.display="block";
+function openLogin() {
+    document.getElementById("loginModal").style.display = "block";
 }
 
-function closeLogin(){
-    document.getElementById("loginModal").style.display="none";
+function closeLogin() {
+    document.getElementById("loginModal").style.display = "none";
 }
 
-async function loginUser(){
+function openRegister() {
+    document.getElementById("registerModal").style.display = "block";
+}
 
-    let email = document.getElementById("loginEmail").value
-    let password = document.getElementById("loginPassword").value
+function closeRegister() {
+    document.getElementById("registerModal").style.display = "none";
+}
+
+async function loginUser() {
+    let email = document.getElementById("loginEmail").value.trim();
+    let password = document.getElementById("loginPassword").value.trim();
 
     let response = await fetch("/login", {
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
         },
-        body:JSON.stringify({
-            email:email,
-            password:password
+        body: JSON.stringify({
+            email: email,
+            password: password
         })
-    })
+    });
 
-    let result = await response.json()
+    let result = await response.json();
+    alert(result.message);
 
-    alert(result.message)
-
-    if(result.status=="approved"){
+    if (result.status === "approved") {
         localStorage.setItem("currentUser", email);
 
-        if(result.role === "instructor"){
+        if (result.role === "instructor") {
             window.location = "/instructor";
         } else {
             window.location = "/courses-page";
@@ -260,68 +265,55 @@ async function loginUser(){
     }
 }
 
-// OPEN / CLOSE REGISTER
-function openRegister(){
-  document.getElementById("registerModal").style.display="block";
-}
+async function registerUser() {
+    let name = document.getElementById("registerName").value.trim();
+    let email = document.getElementById("registerEmail").value.trim();
+    let phone = document.getElementById("registerPhone").value.trim();
+    let password = document.getElementById("registerPassword").value.trim();
+    let role = document.getElementById("registerRole").value;
 
-function closeRegister(){
-  document.getElementById("registerModal").style.display="none";
-}
-
-// REGISTER USER
-<script>
-async function registerUser(){
-  let name = document.getElementById("registerName").value.trim();
-  let email = document.getElementById("registerEmail").value.trim();
-  let phone = document.getElementById("registerPhone").value.trim();
-  let password = document.getElementById("registerPassword").value.trim();
-  let role = document.getElementById("registerRole").value;
-
-  if(!name || !email || !phone || !password){
-    alert("All fields are required");
-    return;
-  }
-
-  let response = await fetch("/register", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({
-      name: name,
-      email: email,
-      phone: phone,
-      password: password,
-      role: role
-    })
-  });
-
-  let result = await response.json();
-
-  alert(result.message);
-
-  if(result.status == "approved"){
-    localStorage.setItem("currentUser", email);
-    closeRegister();
-
-    if(role === "instructor"){
-      window.location = "/instructor";
-    } else {
-      window.location = "/courses-page";
+    if (!name || !email || !phone || !password) {
+        alert("All fields are required");
+        return;
     }
-  }
-}
-</script>
 
-function searchCourses(){
+    let response = await fetch("/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: name,
+            email: email,
+            phone: phone,
+            password: password,
+            role: role
+        })
+    });
+
+    let result = await response.json();
+    alert(result.message);
+
+    if (result.status === "approved") {
+        localStorage.setItem("currentUser", email);
+        closeRegister();
+
+        if (role === "instructor") {
+            window.location = "/instructor";
+        } else {
+            window.location = "/courses-page";
+        }
+    }
+}
+
+function searchCourses() {
     let query = document.getElementById("searchInput").value.trim();
 
-    if(query === ""){
+    if (query === "") {
         alert("Please enter something to search!");
         return;
     }
 
-    // For now, just redirect to courses page with query as a parameter
-    // Later you can implement actual filtering
     window.location = "/courses-page?search=" + encodeURIComponent(query);
 }
 </script>
