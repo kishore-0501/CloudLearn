@@ -144,10 +144,16 @@ transition:0.3s;
     margin-top: 20px;
     display: flex;
     justify-content: center;
-    max-width: 500px;
+    align-items: center;
+    max-width: 650px;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
+}
+
+.search-bar input,
+.search-bar button {
+    margin: 0;
 }
 
 .search-bar input {
@@ -156,9 +162,9 @@ transition:0.3s;
     border-radius: 6px 0 0 6px;
     border: none;
     font-size: 16px;
-    height: 48px; /* Added fixed height */
-    box-sizing: border-box; /* Ensures padding doesn't affect width */
-    outline: none; /* Removes default focus outline */
+    height: 48px;
+    box-sizing: border-box;
+    outline: none;
 }
 
 .search-bar button {
@@ -171,12 +177,8 @@ transition:0.3s;
     border-radius: 0 6px 6px 0;
     cursor: pointer;
     transition: 0.3s;
-    height: 48px; /* Matches input height */
-    box-sizing: border-box; /* Ensures padding doesn't affect width */
-}
-
-.search-bar button:hover {
-    background: #e06600;
+    height: 48px;
+    box-sizing: border-box;
 }
 
 /* ----------------- DASHBOARD ----------------- */
@@ -331,3 +333,12 @@ transition:0.3s;
     border-radius:8px;
     margin-bottom:10px;
 }
+.modal-content{
+    background:white;
+    margin:5% auto;
+    padding:30px;
+    width:380px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 5px 20px rgba(0,0,0,0.3);
+}   
