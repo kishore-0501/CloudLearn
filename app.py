@@ -44,7 +44,7 @@ def instructor_page():
 @app.route("/register", methods=["POST"])
 def register_user():
     try:
-        data = request.get_json()
+        data = request.get_json() or {}
 
         name = data.get("name")
         email = data.get("email")
