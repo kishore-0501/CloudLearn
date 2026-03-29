@@ -406,6 +406,7 @@
 <script>
 let allCourses = [];
 let selectedCategory = "All";
+let displayedCourses = [];
 
 async function loadCourses(){
     try{
@@ -428,20 +429,22 @@ function renderCourses(){
     let keyword = document.getElementById("searchInput").value.toLowerCase();
 
     let filteredCourses = allCourses.filter(course => {
-    let isValid =
-        course.title && course.title.trim() !== "" &&
-        course.instructor && course.instructor.trim() !== "" &&
-        course.video_url && course.video_url.trim() !== "";
+        let isValid =
+            course.title && course.title.trim() !== "" &&
+            course.instructor && course.instructor.trim() !== "" &&
+            course.video_url && course.video_url.trim() !== "";
 
-    let matchesCategory = selectedCategory === "All" || course.category === selectedCategory;
-    let matchesKeyword =
-        (course.title || "").toLowerCase().includes(keyword) ||
-        (course.instructor || "").toLowerCase().includes(keyword) ||
-        (course.description || "").toLowerCase().includes(keyword) ||
-        (course.category || "").toLowerCase().includes(keyword);
+        let matchesCategory = selectedCategory === "All" || course.category === selectedCategory;
+        let matchesKeyword =
+            (course.title || "").toLowerCase().includes(keyword) ||
+            (course.instructor || "").toLowerCase().includes(keyword) ||
+            (course.description || "").toLowerCase().includes(keyword) ||
+            (course.category || "").toLowerCase().includes(keyword);
 
-    return isValid && matchesCategory && matchesKeyword;
-});
+        return isValid && matchesCategory && matchesKeyword;
+    });
+
+    displayedCourses = filteredCourses;
 
     if(filteredCourses.length === 0){
         container.innerHTML = `
@@ -454,7 +457,7 @@ function renderCourses(){
 
     container.innerHTML = "";
 
-    filteredCourses.forEach(course => {
+    filteredCourses.forEach((course, index) => {
         let image = course.thumbnail && course.thumbnail.trim() !== ""
             ? course.thumbnail
             : "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80";
@@ -468,7 +471,10 @@ function renderCourses(){
                     <h3>${course.title || "Untitled Course"}</h3>
                     <p>${course.description || "Start learning with this instructor-uploaded course on CloudLearn."}</p>
                     <div class="course-meta">By ${course.instructor || "Instructor"}</div>
-                    <button class="primary-btn" onclick="window.open('${course.video_url}', '_blank')">Start Learning</button>
+                    <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+                        <button class="primary-btn" onclick="window.open('${course.video_url}', '_blank')">Start Learning</button>
+                        <button class="primary-btn" style="background:#6b7280;" onclick="saveBookmark(${index})">Save</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -622,6 +628,29 @@ async function updateProfile(){
     }
 }
 
+function saveBookmark(index){
+    let course = displayedCourses[index];
+
+    if(!course){
+        alert("Course not found");
+        return;
+    }
+
+    let bookmarks = JSON.parse(localStorage.getItem("bookmarkedCourses") || "[]");
+
+    let alreadySaved = bookmarks.some(item => item.course_id === course.course_id);
+
+    if(alreadySaved){
+        alert("Course already saved");
+        return;
+    }
+
+    bookmarks.push(course);
+    localStorage.setItem("bookmarkedCourses", JSON.stringify(bookmarks));
+
+    alert("Course saved successfully");
+}
+
 function loadBookmarks(){
     let bookmarks = JSON.parse(localStorage.getItem("bookmarkedCourses") || "[]");
     let bookmarkList = document.getElementById("bookmarkList");
@@ -636,12 +665,36 @@ function loadBookmarks(){
     bookmarks.forEach(course => {
         bookmarkList.innerHTML += `
             <div class="bookmark-item">
-                <h4>${course.title}</h4>
-                <p>${course.instructor}</p>
+                <h4>${course.title || "Untitled Course"}</h4>
+                <p><strong>Instructor:</strong> ${course.instructor || "Unknown Instructor"}</p>
+                <p><strong>Category:</strong> ${course.category || "Course"}</p>
+                <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+                    <button onclick="openSavedCourse('${course.video_url}', '${course.course_id}')" style="padding:8px 12px; border:none; border-radius:6px; background:#0056d2; color:white; cursor:pointer;">
+                        Start Learning
+                    </button>
+                    <button onclick="removeBookmark('${course.course_id}')" style="padding:8px 12px; border:none; border-radius:6px; background:#111827; color:white; cursor:pointer;">
+                        Remove
+                    </button>
+                </div>
             </div>
         `;
     });
 }
+
+function removeBookmark(courseId){
+    let bookmarks = JSON.parse(localStorage.getItem("bookmarkedCourses") || "[]");
+
+    bookmarks = bookmarks.filter(course => course.course_id !== courseId);
+
+    localStorage.setItem("bookmarkedCourses", JSON.stringify(bookmarks));
+
+    loadBookmarks();
+}
+
+function openSavedCourse(url, courseId){
+    openVideo(url, courseId);
+}
+
 </script>
 
 <!-- PROFILE POPUP -->
