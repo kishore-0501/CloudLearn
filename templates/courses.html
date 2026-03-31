@@ -408,6 +408,9 @@ let allCourses = [];
 let selectedCategory = "All";
 let displayedCourses = [];
 
+const BOOKMARK_API = "http://54.87.146.239:8000/api/public/bookmarks/";
+const BOOKMARK_USER_ID = 1;
+
 async function loadCourses(){
     try{
         let res = await fetch("https://kjo9l3uvwa.execute-api.us-east-1.amazonaws.com/dev/courses");
@@ -628,7 +631,7 @@ async function updateProfile(){
     }
 }
 
-function saveBookmark(index){
+async function saveBookmark(index){
     let course = displayedCourses[index];
 
     if(!course){
@@ -636,63 +639,102 @@ function saveBookmark(index){
         return;
     }
 
-    let bookmarks = JSON.parse(localStorage.getItem("bookmarkedCourses") || "[]");
+    try{
+        let response = await fetch(BOOKMARK_API, {
+            method: "POST",
+            headers: {
+                "accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                user_id: BOOKMARK_USER_ID,
+                item_id: course.course_id || course.title,
+                title: course.title || "Untitled Course",
+                type: "course"
+            })
+        });
 
-    let alreadySaved = bookmarks.some(item => item.course_id === course.course_id);
-
-    if(alreadySaved){
-        alert("Course already saved");
-        return;
+        let data = await response.json();
+        alert(data.message || "Saved");
+    } catch(error){
+        console.error("BOOKMARK SAVE ERROR:", error);
+        alert("Unable to save bookmark");
     }
-
-    bookmarks.push(course);
-    localStorage.setItem("bookmarkedCourses", JSON.stringify(bookmarks));
-
-    alert("Course saved successfully");
 }
 
-function loadBookmarks(){
-    let bookmarks = JSON.parse(localStorage.getItem("bookmarkedCourses") || "[]");
+async function loadBookmarks(){
     let bookmarkList = document.getElementById("bookmarkList");
+    bookmarkList.innerHTML = "<p>Loading saved courses...</p>";
 
-    bookmarkList.innerHTML = "";
+    try{
+        let response = await fetch(`${BOOKMARK_API}?user_id=${BOOKMARK_USER_ID}`, {
+            method: "GET",
+            headers: {
+                "accept": "application/json"
+            }
+        });
 
-    if(bookmarks.length === 0){
-        bookmarkList.innerHTML = "<p>No saved courses yet.</p>";
+        let data = await response.json();
+        let bookmarks = data.bookmarks || [];
+
+        bookmarkList.innerHTML = "";
+
+        if(bookmarks.length === 0){
+            bookmarkList.innerHTML = "<p>No saved courses yet.</p>";
+            return;
+        }
+
+        bookmarks.forEach(bookmark => {
+            bookmarkList.innerHTML += `
+                <div class="bookmark-item">
+                    <h4>${bookmark.title || "Untitled Course"}</h4>
+                    <p><strong>Type:</strong> ${bookmark.type || "course"}</p>
+                    <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+                        <button onclick="openSavedBookmark('${bookmark.item_id}')" style="padding:8px 12px; border:none; border-radius:6px; background:#0056d2; color:white; cursor:pointer;">
+                            Open Course
+                        </button>
+                        <button onclick="removeBookmark(${bookmark.id})" style="padding:8px 12px; border:none; border-radius:6px; background:black; color:white; cursor:pointer;">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    } catch(error){
+        console.error("LOAD BOOKMARKS ERROR:", error);
+        bookmarkList.innerHTML = "<p>Unable to load saved courses.</p>";
+    }
+}
+
+function openSavedBookmark(itemId){
+    let matchedCourse = allCourses.find(course => (course.course_id || course.title) == itemId);
+
+    if(!matchedCourse){
+        alert("Course details not found");
         return;
     }
 
-    bookmarks.forEach(course => {
-        bookmarkList.innerHTML += `
-            <div class="bookmark-item">
-                <h4>${course.title || "Untitled Course"}</h4>
-                <p><strong>Instructor:</strong> ${course.instructor || "Unknown Instructor"}</p>
-                <p><strong>Category:</strong> ${course.category || "Course"}</p>
-                <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
-                    <button onclick="openSavedCourse('${course.video_url}', '${course.course_id}')" style="padding:8px 12px; border:none; border-radius:6px; background:#0056d2; color:white; cursor:pointer;">
-                        Start Learning
-                    </button>
-                    <button onclick="removeBookmark('${course.course_id}')" style="padding:8px 12px; border:none; border-radius:6px; background:#111827; color:white; cursor:pointer;">
-                        Remove
-                    </button>
-                </div>
-            </div>
-        `;
-    });
+    openVideo(matchedCourse.video_url, matchedCourse.course_id);
 }
 
-function removeBookmark(courseId){
-    let bookmarks = JSON.parse(localStorage.getItem("bookmarkedCourses") || "[]");
+async function removeBookmark(bookmarkId){
+    try{
+        let response = await fetch(`${BOOKMARK_API}${bookmarkId}/?user_id=${BOOKMARK_USER_ID}`, {
+            method: "GET",
+            headers: {
+                "accept": "application/json"
+            }
+        });
 
-    bookmarks = bookmarks.filter(course => course.course_id !== courseId);
-
-    localStorage.setItem("bookmarkedCourses", JSON.stringify(bookmarks));
-
-    loadBookmarks();
-}
-
-function openSavedCourse(url, courseId){
-    openVideo(url, courseId);
+        if(response.ok){
+            loadBookmarks();
+        } else {
+            alert("Unable to remove bookmark");
+        }
+    } catch(error){
+        console.error("REMOVE BOOKMARK ERROR:", error);
+        alert("Unable to remove bookmark");
+    }
 }
 
 </script>
